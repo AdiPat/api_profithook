@@ -10,12 +10,21 @@ It is a REST API that delivers stock market data in real-time. The API uses a we
 
 To run the Flask Server on your local system, install Python 3 and the required dependencies. To ensure you're running the correct versions, use a virtual environment. Clone the project and run this command in the root directory.
 
-**Install modules**
+**1. Install modules**
 ```
 pip install -r requirements.txt
 ```
 
-**Start the Flask server**
+**2. Download Firefox driver i.e. geckodriver for your platform from [here](https://github.com/mozilla/geckodriver/releases) and place it in** 
+```bin/geckodriver```
+
+**3. Setup Database**
+```
+rm stocks.db
+python setup.py
+```
+
+**4. Start the Flask server**
 ```
 python3 app.py
 ```
@@ -41,7 +50,7 @@ Use the stockID provided in the search results to query the stock's information 
 ```
 
 ### 4. Get Historic Data for a Stock
-
+Specify daily, monthly or yearly format and then set the duration.
 ```
 /profithook/api/historic/key=XXX&type=[daily,monthly,yearly]&from=[mm-dd-yy,mm-yy,yy]&to=[mm-dd-yy,mm-yy,yy]'
 ```
