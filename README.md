@@ -1,20 +1,49 @@
 # Profithook
-## RESTful API for Stock Market Data
+## REST API for Stock Market Data
 
-A REST API built over scripts that scrapes financial data of stocks listed on BSE and NSE in real-time.
+Profithook is a non for profit, fun project I built as part of my Web Development Course during Engineering.
+
+It is a REST API that delivers stock market data in real-time. The API uses a web scraper that searches for your favorite stocks, scrapes stock prices and historic data from the web.
+
 
 ## Getting Started
 
-To run this on your local system, you need to first install Python 3 and then install all the required dependencies. To make sure you are running the right versions, it is recommended that you use a virtual environment. Run the following command in the root directory of the project.
+To run the Flask Server on your local system, install Python 3 and the required dependencies. To ensure you're running the correct versions, use a virtual environment. Clone the project and run this command in the root directory.
 
 **Install modules**
 ```
 pip install -r requirements.txt
 ```
 
-**Run the Flask server on localhost**
+**Start the Flask server**
 ```
 python3 app.py
+```
+
+## API Routes
+
+Below are the API routes for using the service.
+
+### 1. Instructions to use the API
+```
+/profithook/api/
+```
+
+### 2. Search a Stock
+```
+/profithook/api/search/<query>
+```
+
+### 3. Get Stock Information
+Use the stockID provided in the search results to query the stock's information directly.
+```
+/profithook/api/<stockID>
+```
+
+### 4. Get Historic Data for a Stock
+
+```
+/profithook/api/historic/key=XXX&type=[daily,monthly,yearly]&from=[mm-dd-yy,mm-yy,yy]&to=[mm-dd-yy,mm-yy,yy]'
 ```
 
 ## License
