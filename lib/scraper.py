@@ -1,3 +1,8 @@
+##
+## scraper.py: Web Page parsing and scraping functionality
+## Author: Aditya Patange
+##
+
 import os
 import sys
 import time

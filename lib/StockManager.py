@@ -1,4 +1,9 @@
 import base
+##
+## StockManager.py: Interface to use the web scraper
+## Author: Aditya Patange
+##
+
 import scraper
 import pymysql
 #import sqlite3
@@ -7,7 +12,7 @@ import pymysql
 class StockManager:
     ## Initializes catalog
     def __init__(self, conf):
-        print(conf)
+        #print(conf)
         self.conn = pymysql.connect(host='localhost', user=conf['user'], password=conf['password'], db=conf['db'], charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
         #self.updateCatalog(self, index="Z");        
                 
@@ -61,10 +66,11 @@ class StockManager:
             if(type(row) == dict): #only one item was returned
                 url = row['url']
             else:
-                url = row[3] 
+                url = row[3] ## TODO: What is this? 
             print("Pulling data for {0}...".format(url))
             ## PULLS ALL DATA FROM MONEYCONTROL
-            data.append(scraper.fetchStockData(url))
+            scrapedData = scraper.fetchStockData(url)
+            data.append(scrapedData)
         cur.close()
         return data
     

@@ -1,12 +1,18 @@
+##
+## app.py: Backend flask server
+## Author: Aditya Patange
+##
+
 from flask import Flask,request,jsonify
 from config import DB_CREDENTIALS
 import sys
 import os
+import test.test__osx_support
 sys.path.append(os.getcwd() + '/lib')
 from lib import StockManager
 from lib import base
-from lib import predictions
 from datetime import datetime
+
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False ## DONT SORT JSON
@@ -73,55 +79,20 @@ def api_getStock(stockId):
 
 @app.route("/profithook/api/historic/<historicQuery>")
 def api_historic(historicQuery):
-    start = datetime.now()
+    start = datetime.now() # performance testing
+    ## Standardise parameters for scraper
     parameters = base.parseHistoricQuery(historicQuery)
-    parameters['type'] = parameters['type'][0].upper() + parameters['type'][1:]
-    parameters['from'] = base.dateToArr(parameters['from'])
-    print(parameters)
-    if(parameters['type'] != 'Yearly'):
-        parameters['to'] = base.dateToArr(parameters['to'])
-    else:
-        parameters['from'] = parameters['from'][0]
-        parameters['to'] = ""
+    parameters = base.standardiseHistoricParameters(parameters)
+    ## Get company information
     cInfo = stockManager.company(companyKey=parameters['key'])[0]
     print('api_historic()', cInfo, parameters)
+    ## Pad company information into results
     result = dict([(key, cInfo[key]) for key in cInfo.keys()])
+    ## Scrape historic data
     result['historicData'] = stockManager.historic(cInfo['companyName'], cInfo['companyKey'], cInfo['url'],parameters['type'], parameters['from'], parameters['to'])
     diff = datetime.now() - start
     print("TIME: ", diff.total_seconds())
-    print(type(result), len(result))
-    print(result)
     return jsonify(result)
-
-@app.route("/profithook/api/predict/<predictQuery>")
-def api_predict(predictQuery):
-    try:
-        start = datetime.now()
-        parameters = base.parseHistoricQuery(predictQuery)
-        parameters['type'] = parameters['type'][0].upper() + parameters['type'][1:]
-        parameters['from'] = base.dateToArr(parameters['from'])
-        if(parameters['type'] != 'Yearly'):
-            parameters['to'] = base.dateToArr(parameters['to'])
-        else:
-            parameters['from'] = parameters['from'][0]
-            parameters['to'] = ""
-        cInfo = stockManager.company(companyKey=parameters['key'])[0]
-        print('api_historic()', cInfo, parameters)
-        result = dict([(key, cInfo[key]) for key in cInfo.keys()])
-        result['historicData'] = stockManager.historic(cInfo['companyName'], cInfo['companyKey'], cInfo['url'],parameters['type'], parameters['from'], parameters['to'])
-        future = predictions.predict(result['historicData'])
-        result['future'] = future
-        diff = datetime.now() - start
-        #return "cool"
-        print("TIME: ", diff.total_seconds())
-        #print(type(result), len(result))
-        #print(result)
-        return jsonify(result)
-    except:
-        print("Server error")
-    return jsonify([])
-    
-
 
 #
 # Search Query

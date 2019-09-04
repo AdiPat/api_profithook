@@ -1,3 +1,8 @@
+##
+## base.py: Includes utility functions
+## Author: Aditya Patange
+##
+
 from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
@@ -90,8 +95,19 @@ def parseHistoricQuery(query):
         result[prop] = val
     return result
 
+def standardiseHistoricParameters(parameters):
+    parameters['type'] = parameters['type'][0].upper() + parameters['type'][1:]
+    parameters['from'] = dateToArr(parameters['from'])
+    # debug print(parameters)
+    if(parameters['type'] != 'Yearly'):
+        parameters['to'] = dateToArr(parameters['to'])
+    else:
+        parameters['from'] = parameters['from'][0]
+        parameters['to'] = ""
+    return parameters
+
 def dateToArr(dateStr):
-    return [x for x in dateStr.split('-')]
+    return dateStr.split('-')
 #
 # Writes data in json to file
 # 
