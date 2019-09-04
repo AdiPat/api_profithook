@@ -228,8 +228,8 @@ def init_webdriver(pageLoadStrategy):
     #caps["pageLoadStrategy"] = "none"
     driverPath = os.getcwd()+'/bin/geckodriver'
     opts = Options()
-    opts.set_headless()
-    assert opts.headless
+    opts.set_headless() # Uncomment these two lines
+    assert opts.headless # to see the browser do it's magic automatically
     driver = Firefox(desired_capabilities=caps, options=opts, executable_path=driverPath)
     return driver
 
@@ -372,12 +372,13 @@ def _getHistoricData(driver, companyInfo, durationType, duration):
     return data
 
 
-def getHistoricData(companyInfo, durationType, duration):
-    driver = init_webdriver('normal')
+def getHistoricData(driver, companyInfo, durationType, duration):
+    #driver = init_webdriver('normal')
     data = []
     print(companyInfo, durationType, duration)
     try:
         data = _getHistoricData(driver, companyInfo, durationType, duration)
     finally:
-        driver.quit()
+        #driver.quit()
+        print("Webdriver should quit but we keep it open.")
     return data

@@ -14,6 +14,7 @@ class StockManager:
     def __init__(self, conf):
         #print(conf)
         self.conn = pymysql.connect(host='localhost', user=conf['user'], password=conf['password'], db=conf['db'], charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+        self.driver = scraper.init_webdriver('normal')
         #self.updateCatalog(self, index="Z");        
                 
     ## Updates the catalog db with latest data
@@ -132,5 +133,5 @@ class StockManager:
     #
         
     def historic(self, companyName, companyKey, url, durationType, durationFrom, durationTo):
-        results = scraper.getHistoricData({'companyName':companyName, 'companyKey':companyKey, 'url':url}, durationType, (durationFrom if durationType=="Yearly" else {'from':durationFrom, 'to':durationTo}))
+        results = scraper.getHistoricData(self.driver, {'companyName':companyName, 'companyKey':companyKey, 'url':url}, durationType, (durationFrom if durationType=="Yearly" else {'from':durationFrom, 'to':durationTo}))
         return results
