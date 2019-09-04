@@ -76,38 +76,25 @@ class StockManager:
         return data
     
     ## Returns search results for a tag
+
     def search(self, query):
-        results = scraper.parseSearchPage(query)
-        ### If moneycontrol doesn't yield results, query db
         tags = base.parseSearchQuery(query)
         if(len(tags) == 0):
             return results
-
         cur = self.conn.cursor()        
         ## Fetch all results based on tags
-        i = 0
         alias = 'table'
-        ## If there are more than 4 tags , fetch for first two and last
-        ## Fetch only for 3 tags , greater than that is not practical
         sql = "SELECT * from %inner where companyName like '%{%c}%' or companyId like '%{%c}%'"
-        final = ""
-        if(len(tags) >= 3):
-            last = sql.replace('%inner', 'catalog').replace('{%c}', tags[len(tags)-1]) # table0
-            middle = sql.replace('{%c}', tags[1])
-            first = sql.replace('{%c}', tags[0])
-            final = base.nestSelectQuery(first,base.nestSelectQuery(middle, last, 'table0'), 'table1')
-        if(len(tags) == 2):
-            last = sql.replace('%inner', 'catalog').replace('{%c}', tags[1])
-            first = sql.replace('{%c}', tags[0])
-            final = base.nestSelectQuery(first,last,'table0')
-        if(len(tags) == 1):
-            final = sql.replace('%inner', 'catalog').replace('{%c}', tags[0])
-        
-        print("FINAL QUERY: search() | " + final)
-        cur.execute(final)
-        results = cur.fetchall()
+        res = []
+        for i in range(len(tags)):
+            if i <= 2: # take only the first 3 tags
+                q = sql.replace('%inner', 'catalog').replace('{%c}', tags[i])
+                cur.execute(q)
+                curRes = cur.fetchall()
+                res.append(curRes)
+        #print(res)
         cur.close()
-        return results
+        return res
     
     ## Returns all results which match companyId
     def company(self, companyId="", companyKey = ""):
